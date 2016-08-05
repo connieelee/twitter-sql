@@ -13,13 +13,6 @@ module.exports = function makeRouterWithSockets (io) {
       var tweets = result.rows;
       res.render('index', { title: 'Twitter.js', tweets: tweets, showForm: true });
     });
-
-    // var allTheTweets = tweetBank.list();
-    // res.render('index', {
-    //   title: 'Twitter.js',
-    //   tweets: allTheTweets,
-    //   showForm: true
-    // });
   }
 
   // here we basically treet the root view and tweets view as identical
@@ -33,14 +26,6 @@ module.exports = function makeRouterWithSockets (io) {
       var tweets = result.rows;
       res.render('index', { title: 'Twitter.js', username: req.params.username, tweets: tweets, showForm: true });
     });
-
-    // var tweetsForName = tweetBank.find({ name: req.params.username });
-    // res.render('index', {
-    //   title: 'Twitter.js',
-    //   tweets: tweetsForName,
-    //   showForm: true,
-    //   username: req.params.username
-    // });
   });
 
   // single-tweet page
@@ -51,12 +36,6 @@ module.exports = function makeRouterWithSockets (io) {
 
       res.render('index', { title: 'Twitter.js', tweets: tweets, showForm: true });
     });
-
-    // var tweetsWithThatId = tweetBank.find({ id: Number(req.params.id) });
-    // res.render('index', {
-    //   title: 'Twitter.js',
-    //   tweets: tweetsWithThatId // an array of only one element ;-)
-    // });
   });
 
   // create a new tweet
@@ -90,15 +69,17 @@ module.exports = function makeRouterWithSockets (io) {
         });
       }
     });
-
-
-    // client.query('INSERT INTO ', function (err, result) {
-    //   if (err) return next(err); // pass errors to Express
-    // });
-
-    // var newTweet = tweetBank.add(req.body.name, req.body.content);
-    // io.sockets.emit('new_tweet', newTweet);
   });
+
+  router.post('/tweets/:id', function(req, res, next){
+    console.log('delete');
+    client.query('DELETE FROM tweets WHERE id=$1',[req.params.id], function(err, result){
+      if (err) return next(err);
+
+      res.redirect('/');
+    })
+  })
+
 
   // // replaced this hard-coded route with general static routing in app.js
   // router.get('/stylesheets/style.css', function(req, res, next){

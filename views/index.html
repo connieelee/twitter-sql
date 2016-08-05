@@ -28,13 +28,17 @@
       <!-- display tweets here -->
       <div id="tweets">
       {% for tweet in tweets | reverse %}
-        <div class="tweetbox">
+        <div class="tweetbox" id="{{tweet.id}}">
           <img src="{{tweet.pictureurl}}">
           <div class="content">
             <p class="by"><a href="/users/{{ tweet.name }}">{{tweet.name}}</a></p>
             <p><a href="/tweets/{{ tweet.id }}">{{tweet.content}}</a></p>
           </div>
+          <form method="post" action="/tweets/{{tweet.id}}">
+            <button >delete</button>
+          </form>
         </div>
+
       {% endfor %}
       </div>
 

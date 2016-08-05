@@ -71,19 +71,22 @@ module.exports = function makeRouterWithSockets (io) {
           userExists = true;
           client.query('INSERT INTO tweets(userid, content) VALUES ($1, $2)', [users[user].id, req.body.content], function (err, result) {
             if (err) return next(err);
+            res.redirect('/');
           });
         }
       }
 
       // user doesn't exist, insert user before inserting tweet
       if (!userExists) {
-        client.query("INSERT INTO users (name, pictureurl) VALUES ($1, 'https://pbs.twimg.com/profile_images/2450268678/olxp11gnt09no2y2wpsh_normal.jpeg')", [req.body.name], function(err, result) {
+        var newUser_id;
+        client.query("INSERT INTO users (name, pictureurl) VALUES ($1, 'http://thepetwiki.com/images/thumb/Happy_Cat.jpg/400px-Happy_Cat.jpg') RETURNING id", [req.body.name], function(err, result) {
           if (err) return next(err);
-          // var user_id = users.length + 1;
-        });
+          newUser_id = result.rows[0].id;
 
-        client.query("INSERT INTO tweets(userid, content) VALUES ($1, $2)", [user_id, req.body.content], function(err, result) {
-          if (err) return next(err);
+          client.query("INSERT INTO tweets(userid, content) VALUES ($1, $2)", [newUser_id, req.body.content], function(err, result) {
+            if (err) return next(err);
+            res.redirect('/');
+          });
         });
       }
     });
@@ -95,7 +98,6 @@ module.exports = function makeRouterWithSockets (io) {
 
     // var newTweet = tweetBank.add(req.body.name, req.body.content);
     // io.sockets.emit('new_tweet', newTweet);
-    res.redirect('/');
   });
 
   // // replaced this hard-coded route with general static routing in app.js
